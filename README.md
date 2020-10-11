@@ -18,3 +18,5 @@ How to run it
 And then, run the project in local:
 
     $ npm run dev
+
+You can see the app running in http://localhost:8080
