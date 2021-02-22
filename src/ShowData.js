@@ -17,6 +17,8 @@ class ShowData extends React.Component{
       searchMinLength: 3
     }
     this.handlePageClick = this.handlePageClick.bind(this)
+      console.log(process.env)
+
   }
 
   extractDate(date){
@@ -37,19 +39,34 @@ class ShowData extends React.Component{
     }
   }
 
+  arraySortByObjProp(arr, propName, order){
+    return arr.sort(function (a, b) {
+      if (a[propName] < b[propName]) {
+        return order === "asc" ? -1 : 1;
+      }
+      if (a[propName] > b[propName]) {
+        return order === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
   fetchData(){
-    fetch('./data.json')
+    // fetch('./data.json')
+    fetch(`${process.env.API_REST_URL}/rest/data`)    
     .then(response => {
       return response.json()
     })
     .then(data => {      
-      if ((this.state.filter != '') || ((this.state.checkedCategories.length != 0))){                                    
+      console.log(data)
+      if ((this.state.filter != '') || ((this.state.checkedCategories.length != 0))){     
         const filteredElementsList = []
         data.filter(element => {         
-          if ((this.typeIsChecked(element.typeId) && (this.state.filter === '')) || ((this.typeIsChecked(element.typeId)) && this.stringFound(element)) || ((this.state.checkedCategories.length == 0) && this.stringFound(element))){
+          if ((this.typeIsChecked(element.typeid) && (this.state.filter === '')) || ((this.typeIsChecked(element.typeid)) && this.stringFound(element)) || ((this.state.checkedCategories.length == 0) && this.stringFound(element))){
             filteredElementsList.push(element)
           }
-        })  
+        })
+
         data = filteredElementsList
       }
       fetch('./categories.json')
@@ -60,7 +77,7 @@ class ShowData extends React.Component{
         this.setState({      
           totalElements: data.length,
           pageCount: Math.ceil(data.length / this.state.perPage),
-          partialElementsList: this.sliceElements(data),
+          partialElementsList: this.sliceElements(this.arraySortByObjProp(data, "date", "desc")),
           offset: 0,
           currentPage: 0,
           categories

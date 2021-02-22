@@ -24,20 +24,27 @@ class ShowElement extends React.Component{
     return dateYearToInvert[2] + '-' + dateYearToInvert[1] + '-' + dateYearToInvert[0]          
   } 
 
-  componentDidMount(){    
-    fetch('./data.json')
+  componentDidMount(){
+    // fetch('./data.json')
+    fetch(`${process.env.API_REST_URL}/rest/data/element/${this.props.match.params.id}`)
     .then(response => {
       return response.json()
     })
     .then(data => {
-      const elementMatched = data.filter(obj => {
+    this.setState({
+      element: data        
+    }) 
+
+    /*  const elementMatched = data.filter(obj => {
         return obj.id == this.props.match.params.id
       })
       elementMatched[0].date = this.extractDate(elementMatched[0].date)
       this.setState({
         element: elementMatched[0]        
-      })
+      }) 
+    */
     })
+
   }
 
   render() {

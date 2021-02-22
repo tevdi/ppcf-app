@@ -1,19 +1,19 @@
 [
    {
       "id":1,
-      "type": "Category 1"
+      "type": "Prestashop"
    },
    {
       "id":2,
-      "type": "Category 2"
+      "type": "ReactJS"
    },
    {
       "id":3,
-      "type": "Category 3"
+      "type": "JavaScript"
    },
    {
       "id":4,
-      "type": "Category 4"
+      "type": "Drupal"
    },
    {
       "id":5,

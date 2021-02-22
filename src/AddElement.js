@@ -14,7 +14,8 @@ class AddElement extends React.Component{
 			editorState: EditorState.createEmpty(),
 			title: '',
 			date: '',
-			type: '',
+			type: 'PrestaShop',
+            typeid: 1,
 			mode: 'add'
 		}
     this.onEditorStateChange = this.onEditorStateChange.bind(this)
@@ -48,6 +49,9 @@ class AddElement extends React.Component{
 	}
 
 	handleChange(event){
+        if (event.target.name === "typeid"){
+        this.setState({type: event.target.options[event.target.selectedIndex].text});
+        }
 		this.setState({
 			[event.target.name]: event.target.value
 		})
@@ -55,19 +59,41 @@ class AddElement extends React.Component{
 
   submitChanges(event){
 		event.preventDefault()        
+        console.log(this.state)
 		const element = {
-			title: event.target.title.value,
-			date: event.target.date.value,
-			type: event.target.type.value,
+			title: this.state.title,
+			date: this.state.date,
+			type: this.state.type,
+			typeid: this.state.typeid,
 			text: draftToHtml(convertToRaw(this.state.editorState.getCurrentContent()))
 		}            
-		if (this.state.mode == 'add'){
-			alert('Element added SUCCESSFULLY.')
-			window.location.href = process.env.ROUTER_BASENAME
-		} else {                
-			alert('Element edited SUCCESSFULLY.')
-			window.location.href = process.env.ROUTER_BASENAME
-		}		
+		
+		console.log(element)
+            if (this.state.mode == 'add'){
+                fetch(process.env.API_REST_URL+'/rest/data/insertElement', {                
+                    method: 'post',
+                    body: JSON.stringify({
+                        element
+                    })
+                })
+                .then(this.handleErrors)
+                .then(response => {
+                    alert('Element added SUCCESSFULLY.')
+                })
+                .catch(error => alert('ERROR adding the element: \n\n'+error))                
+            } else {                
+                fetch(process.env.API_REST_URL+'/rest/data/editElement/'+this.props.match.params.id, {                
+                    method: 'post',
+                    body: JSON.stringify({
+                        element
+                    })
+                })
+                .then(this.handleErrors)
+                .then(response => {
+                    alert('Element edited SUCCESSFULLY.')
+                })
+                .catch(error => alert('ERROR adding the element: \n\n'+error))                                
+            }		
   }
 
   render(){
@@ -80,7 +106,11 @@ class AddElement extends React.Component{
 			<form onSubmit={this.submitChanges.bind(this)}>
 				<input type="text" placeholder="Title..." name="title" value={this.state.title} onChange={this.handleChange.bind(this)}/>
 				<input type="Date" name="date" value={this.extractDateYMD(this.state.date)} onChange={this.handleChange.bind(this)}/>
-				<input type="text" placeholder="Type..." name="type" value={this.state.type} onChange={this.handleChange.bind(this)}/>
+				<select name="typeid" value={this.state.typeid} onChange={this.handleChange.bind(this)}>
+                    <option value="1">PrestaShop</option>
+                    <option value="2">React</option>
+                    <option value="3">JavaScript</option>
+				</select>
 				<Editor
 					editorState={editorState}
 					wrapperClassName="demo-wrapper"

@@ -6,13 +6,36 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyPlugin = require('copy-webpack-plugin');
 
-module.exports = ( env, argv ) => {
-const basename = '/'
-const api_rest_basename = ''
+module.exports = (env, argv) => {
+	/* In case of required dynamic basename for development in local: 
+
+		npm run local -- --directory='/dynamic/directory/'
+		
+	*/
+	let basename
+	// const API_REST_URL = 'https://stake-something-staging.herokuapp.com'						  // No need to use API Rest folder if there isn't.
+    const API_REST_SOURCE = 'http://localhost:8000'				                                  // No need to use API Rest folder if there isn't.
+    const API_REST_URL = 'http://localhost:3000';
+	if (argv.domain){
+		if (argv.directory){
+			basename = argv.directory
+		} else {
+			// basename = __dirname.substring(__dirname.lastIndexOf("/")+1);
+			// basename = '/'+basename+'/dist/';
+			basename = __dirname.replace('/var/www', '') + '/dist'																					// The root of Apache must be /var/www
+		}
+	} else {
+		basename = ''
+	}
+
+	console.log('Environment: '+ env)
+	console.log('BASENAME is: ' + basename)
+	console.log('API REST URL is: ' + API_REST_URL)
 return({
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[hash].js',
+			path: path.resolve(__dirname, 'dist'),
+			publicPath: `${basename}/`,
+			filename: '[hash].js',
     },
     module: {
         rules: [
@@ -59,8 +82,8 @@ return({
         new webpack.DefinePlugin({
         process: {
             env: {
-                ROUTER_BASENAME: JSON.stringify(basename),
-                API_REST_BASENAME: JSON.stringify(api_rest_basename)
+              BASENAME: JSON.stringify(basename),
+              API_REST_URL: JSON.stringify(API_REST_URL)
             }
         }
         }),
@@ -80,9 +103,14 @@ return({
         }),
     ],
     devServer: {
-        host: 'localhost',
-        port: 8080,
-        historyApiFallback: true,
-    },
-})
+			host: 'localhost',
+			port: 3000,
+			historyApiFallback: true,
+			proxy: {
+				'/rest/**': {
+					target: API_REST_SOURCE,
+				}
+			},
+		}		
+	})
 }
