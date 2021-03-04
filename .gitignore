@@ -48,8 +48,6 @@ Thumbs.db
 *.mov
 *.wmv
 
-.vscode/
-.eslintrc.js
-dist/
-
+# .vscode/
+# .eslintrc.js
 .directory

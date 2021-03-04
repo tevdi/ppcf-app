@@ -1,37 +1,33 @@
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import history from './history'
-import ShowData from './ShowData'
-import ShowElement from './ShowElement'
-import AddElement from './AddElement'
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import history from 'newHistory';
+import ShowData from 'ShowData';
+import ShowElement from 'ShowElement';
+import AddElement from 'AddElement';
 
-require('./css/App.scss')
-
-const basename = process.env.ROUTER_BASENAME || '/'
+require('./css/App.scss');
 
 class App extends React.Component {
   render() {
     return (
       <React.Fragment>
         <header>
-        <h1>PPCF</h1>
+          <h1>PPCF</h1>
         </header>
         <div>
-          <Router history={ history } basename={ basename }>
+          <Router history={history}>
             <Switch>
-              <Route path="/add-element/:id?" component={AddElement}>
-              </Route>
-              <Route path="/element/:id" component={ShowElement}>
-              </Route>
-              <Route path="/">
-                <ShowData/>
+              <Route path={`${process.env.BASENAME}/add-element/:id?`} component={AddElement}></Route>
+              <Route path={`${process.env.BASENAME}/element/:id`} component={ShowElement}></Route>
+              <Route path={`${process.env.BASENAME}`}>
+                <ShowData />
               </Route>
             </Switch>
           </Router>
         </div>
       </React.Fragment>
-    )
+    );
   }
 }
 
-export default App
+export default App;
