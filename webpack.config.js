@@ -8,8 +8,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => {
-  // const API_REST_SOURCE = 'http://localhost:8000'
-  const API_REST_SOURCE = 'http://localhost/ppcf/ppcf-rest/public';
+  const API_REST_SOURCE = 'http://localhost:8000'
+  // const API_REST_SOURCE = 'http://localhost/ppcf/rest_api/public';
   const API_REST_URL = !argv.mode || argv.mode === 'production' ? API_REST_SOURCE : 'http://localhost:3000';
   const basename = !argv.mode ? __dirname.replace('/var/www', '') + '/dist' : ''; // The root of Apache must be /var/www
 
